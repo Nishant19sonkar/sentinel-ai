@@ -168,8 +168,7 @@
   .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 
   /* ── CONTENT PANELS ── */
-  .panel { display: none !important; padding: 20px; }
-  .panel.active { display: block !important; }
+  .panel { padding: 20px; }
 
   /* ── LIVE FEED ── */
   .feed-header {
@@ -544,7 +543,7 @@
 </div>
 
 <!-- EXPLOIT DEMO -->
-<div class="panel" id="panel-exploit">
+<div class="panel" id="panel-exploit" style="display:none">
   <div style="font-size:11px;color:var(--muted);margin-bottom:16px;">REAL SQLITE ENGINE · WEBASSEMBLY · NOT A SIMULATION</div>
   <div class="exploit-layout">
     <div class="exploit-panel">
@@ -590,7 +589,7 @@
 </div>
 
 <!-- POLICY ENGINE -->
-<div class="panel" id="panel-policy">
+<div class="panel" id="panel-policy" style="display:none">
   <div class="policy-layout">
     <div class="policy-list">
       <div class="policy-list-hdr">
@@ -657,7 +656,7 @@ internal_domain(e) {
 </div>
 
 <!-- REGULATORY -->
-<div class="panel" id="panel-regulatory">
+<div class="panel" id="panel-regulatory" style="display:none">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
     <span style="font-size:11px;color:var(--muted)">GDPR · EU AI ACT · SOX · CCPA</span>
     <button class="run-btn">Export Report</button>
@@ -730,7 +729,7 @@ internal_domain(e) {
 </div>
 
 <!-- AGENT MAP -->
-<div class="panel" id="panel-agents">
+<div class="panel" id="panel-agents" style="display:none">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
     <span style="font-size:11px;color:var(--muted)">PERMISSIONS · RISK SCORES · LETHAL TRIFECTA</span>
     <button class="run-btn">Export</button>
@@ -820,16 +819,28 @@ internal_domain(e) {
 </div>
 
 <script>
-// Tab navigation
+// Tab navigation — explicit panel IDs only
+const PANELS = ['panel-live','panel-exploit','panel-policy','panel-regulatory','panel-agents'];
+
+function showPanel(tabName) {
+  PANELS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  const target = document.getElementById('panel-' + tabName);
+  if (target) target.style.display = 'block';
+  document.querySelectorAll('.tab-link').forEach(l => {
+    l.classList.toggle('active', l.dataset.tab === tabName);
+  });
+}
+
+// Init: hide all, show live
+showPanel('live');
+
 document.querySelectorAll('.tab-link').forEach(link => {
   link.addEventListener('click', e => {
     e.preventDefault();
-    const tab = link.dataset.tab;
-    document.querySelectorAll('.tab-link').forEach(l => l.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    link.classList.add('active');
-    const panel = document.getElementById('panel-' + tab);
-    if (panel) panel.classList.add('active');
+    showPanel(link.dataset.tab);
   });
 });
 
