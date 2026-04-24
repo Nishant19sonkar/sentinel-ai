@@ -168,8 +168,8 @@
   .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 
   /* ── CONTENT PANELS ── */
-  .panel { display: none; padding: 20px; }
-  .panel.active { display: block; }
+  #panelContainer .panel { display: none; padding: 20px; }
+  #panelContainer .panel.active { display: block; }
 
   /* ── LIVE FEED ── */
   .feed-header {
@@ -503,6 +503,7 @@
      MAIN TAB CONTENT
      ════════════════════════════════════════ -->
 
+<div id="panelContainer">
 <!-- LIVE FEED -->
 <div class="panel active" id="panel-live">
   <div class="feed-header">
@@ -799,6 +800,8 @@ internal_domain(e) {
     </div>
   </div>
 </div>
+
+</div><!-- /panelContainer -->
 
 <!-- API KEY MODAL -->
 <div class="modal-overlay" id="apiModal">
