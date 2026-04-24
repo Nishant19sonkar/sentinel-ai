@@ -411,6 +411,7 @@
   <span class="status-pill">● LIVE</span>
   <span class="nav-sep">|</span>
   <a href="#" class="tab-link active" data-tab="live">Live Feed</a>
+  <a href="#" class="tab-link" data-tab="poc">🎥 POC Videos</a>
   <a href="#" class="tab-link" data-tab="exploit">Exploit Demo</a>
   <a href="#" class="tab-link" data-tab="policy">Policy Engine</a>
   <a href="#" class="tab-link" data-tab="regulatory">Regulatory</a>
@@ -429,8 +430,13 @@
 </div>
 
 <!-- ════════════════════════════════════════
-     POC VIDEOS SECTION (always visible at top)
+     MAIN TAB CONTENT
      ════════════════════════════════════════ -->
+
+<div id="panelContainer">
+
+<!-- POC VIDEOS PANEL -->
+<div class="panel" id="panel-poc" style="display:none">
 <div class="poc-hero" id="pocHero">
   <div class="poc-badge">REAL ATTACK · REAL FOOTAGE · NOT A SIMULATION</div>
   <div class="poc-title">Alan's Live <span>Proof-of-Concept</span> Demos</div>
@@ -497,12 +503,9 @@
 
   </div>
 </div>
+</div>
+<!-- /POC VIDEOS PANEL -->
 
-<!-- ════════════════════════════════════════
-     MAIN TAB CONTENT
-     ════════════════════════════════════════ -->
-
-<div id="panelContainer">
 <!-- LIVE FEED -->
 <div class="panel active" id="panel-live">
   <div class="feed-header">
@@ -820,7 +823,7 @@ internal_domain(e) {
 
 <script>
 // Tab navigation — explicit panel IDs only
-const PANELS = ['panel-live','panel-exploit','panel-policy','panel-regulatory','panel-agents'];
+const PANELS = ['panel-live','panel-poc','panel-exploit','panel-policy','panel-regulatory','panel-agents'];
 
 function showPanel(tabName) {
   PANELS.forEach(id => {
