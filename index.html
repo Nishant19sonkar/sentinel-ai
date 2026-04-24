@@ -1,81 +1,886 @@
-⚡ SENTINEL.ai
-● LIVE
-|
-Live Feed
-Exploit Demo
-Policy Engine
-Regulatory
-Agent Map
-⚙ AI Key
-🛡️
-Sentinel intercepting all agent tool calls
-· 6 agents
-· 3 environments
-· Session: 0m 4s
-REAL ATTACK · REAL FOOTAGE · NOT A SIMULATION
-Alan's Live Proof-of-Concept Demos
-These are actual recorded exploits — no scripting, no mock data. Watch an AI agent silently exfiltrate confidential email to an external attacker, then see Sentinel block a credit card number leak in real time.
-📧
-Data Exfiltration via Google Workspace AI Agent
-ATTACK
-~1 min
-What you're seeing: A Google Workspace AI agent receives a prompt-injected instruction inside a legitimate email. Without any malware or stolen credentials, the agent silently forwards confidential email contents to an external attacker address. No alerts. No logs. No malware.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sentinel — AI Agent Runtime Enforcement</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --border: #2a2a3a;
+    --accent: #ff6b35;
+    --accent2: #ff3355;
+    --green: #00ff88;
+    --yellow: #ffcc00;
+    --red: #ff3355;
+    --blue: #4488ff;
+    --text: #e8e8f0;
+    --muted: #888899;
+    --font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    min-height: 100vh;
+  }
 
-The threat vector: Agent has access to private data + processes untrusted content + can communicate externally. This is the lethal trifecta — and it's active in your environment today.
-🛡️
-Sentinel Blocks Credit Card Data Leak — Live
-BLOCKED
-54 sec
-What you're seeing: Sentinel's enforcement layer intercepts an AI agent attempting to transmit PII (credit card numbers) through an outbound channel. The policy engine matches the pattern in under 10ms and blocks the call — producing a full audit trail suitable for SEC Reg S-P and GDPR evidence.
+  /* ── NAV ── */
+  nav {
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 20px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 100;
+    flex-wrap: wrap;
+  }
+  .logo { font-size: 16px; font-weight: 700; color: var(--accent); margin-right: 12px; }
+  .logo em { font-style: italic; color: var(--text); }
+  .status-pill {
+    background: #00ff8820; border: 1px solid var(--green);
+    color: var(--green); padding: 2px 8px; border-radius: 2px; font-size: 11px;
+  }
+  nav a {
+    color: var(--muted); text-decoration: none; padding: 4px 8px;
+    font-size: 11px; border-radius: 2px; transition: color .2s;
+  }
+  nav a:hover, nav a.active { color: var(--accent); }
+  .nav-sep { color: var(--border); }
+  .ml-auto { margin-left: auto; }
+  .api-btn {
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--muted); padding: 4px 10px; border-radius: 3px;
+    cursor: pointer; font-family: var(--font-mono); font-size: 11px;
+  }
 
-The compliance angle: Same event. Same agent. One trigger for both your security team and your compliance officer.
-REAL-TIME · ALL AGENTS · ALL TOOLS
-▶ Run Demo
-1,248
-Total Intercepted
-↑ live
-89
-Threats Blocked
-active
-1,142
-Allowed
-91.6% pass rate
-€2.3M
-Fine Exposure Saved
-This month
-INTERCEPTED TOOL CALLS · Tap for details
-14:23:01
-email_agent
-send_email
-Exfil attempt → attacker@ext.com
-BLOCKED
-14:22:58
-db_agent
-query_db
-SELECT orders WHERE status='pending'
-ALLOWED
-14:22:44
-email_agent
-send_email
-PII detected: CC 4532-****-****-1234
-BLOCKED
-14:22:31
-calendar_agent
-create_event
-Q3 review — internal attendees only
-ALLOWED
-14:22:17
-db_agent
-execute_sql
-DROP TABLE customers — BLOCKED
-BLOCKED
-14:22:09
-docs_agent
-read_file
-Q3_report.pdf — internal read
-ALLOWED
-14:21:55
-orchestrator
-http_request
-External POST → data.exfil.io
-BLOCKED
+  /* ── POC HERO SECTION ── */
+  .poc-hero {
+    background: linear-gradient(135deg, #0a0a0f 0%, #0f0f1a 50%, #0a0a0f 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 32px 20px;
+  }
+  .poc-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #ff335520; border: 1px solid var(--red);
+    color: var(--red); padding: 4px 10px; border-radius: 2px;
+    font-size: 10px; font-weight: 700; letter-spacing: .1em;
+    margin-bottom: 16px;
+  }
+  .poc-badge::before { content: '●'; animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+  .poc-title {
+    font-size: 22px; font-weight: 700; color: var(--text);
+    margin-bottom: 6px; line-height: 1.2;
+  }
+  .poc-title span { color: var(--accent); }
+  .poc-sub {
+    color: var(--muted); font-size: 12px; margin-bottom: 28px;
+    max-width: 640px; line-height: 1.6;
+  }
+  .poc-sub strong { color: var(--text); }
+
+  .poc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(520px, 1fr));
+    gap: 20px;
+    max-width: 1200px;
+  }
+  @media (max-width: 580px) {
+    .poc-grid { grid-template-columns: 1fr; }
+  }
+
+  .poc-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: border-color .2s;
+  }
+  .poc-card:hover { border-color: var(--accent); }
+
+  .poc-card-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .poc-card-title {
+    font-size: 12px; font-weight: 700; color: var(--text);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .poc-tag {
+    padding: 2px 7px; border-radius: 2px; font-size: 10px; font-weight: 700;
+  }
+  .tag-red { background: #ff335520; color: var(--red); border: 1px solid var(--red); }
+  .tag-green { background: #00ff8820; color: var(--green); border: 1px solid var(--green); }
+  .tag-orange { background: #ff6b3520; color: var(--accent); border: 1px solid var(--accent); }
+  .poc-duration { color: var(--muted); font-size: 10px; }
+
+  .poc-video-wrap {
+    position: relative;
+    background: #000;
+    line-height: 0;
+  }
+  .poc-video-wrap video {
+    width: 100%;
+    display: block;
+    max-height: 320px;
+    object-fit: contain;
+    background: #000;
+  }
+  .poc-card-footer {
+    padding: 10px 16px;
+    border-top: 1px solid var(--border);
+    background: var(--surface2);
+    font-size: 10px; color: var(--muted); line-height: 1.6;
+  }
+  .poc-card-footer strong { color: var(--text); }
+
+  /* ── SESSION BAR ── */
+  .session-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 6px 20px;
+    font-size: 11px; color: var(--muted);
+    display: flex; gap: 16px; align-items: center; flex-wrap: wrap;
+  }
+  .session-bar span { display: flex; align-items: center; gap: 4px; }
+  .dot-green { color: var(--green); }
+  .dot-red { color: var(--red); }
+
+  /* ── TABS ── */
+  .tabs {
+    display: flex; gap: 0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+  }
+  .tab {
+    padding: 10px 18px; font-size: 11px; color: var(--muted);
+    cursor: pointer; border-bottom: 2px solid transparent;
+    white-space: nowrap; transition: all .2s; font-family: var(--font-mono);
+    background: none; border-top: none; border-left: none; border-right: none;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── CONTENT PANELS ── */
+  .panel { display: none !important; padding: 20px; }
+  .panel.active { display: block !important; }
+
+  /* ── LIVE FEED ── */
+  .feed-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 16px; flex-wrap: wrap; gap: 8px;
+  }
+  .feed-title { font-size: 11px; color: var(--muted); letter-spacing: .1em; }
+  .run-btn {
+    background: var(--accent); color: #fff; border: none;
+    padding: 6px 16px; border-radius: 3px; cursor: pointer;
+    font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+  }
+  .stats-row {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px; margin-bottom: 20px;
+  }
+  .stat-card {
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 14px; border-radius: 3px;
+  }
+  .stat-val { font-size: 24px; font-weight: 700; color: var(--text); }
+  .stat-val.green { color: var(--green); }
+  .stat-val.red { color: var(--red); }
+  .stat-val.orange { color: var(--accent); }
+  .stat-label { font-size: 10px; color: var(--muted); margin-top: 2px; }
+  .event-log {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 3px; overflow: hidden;
+  }
+  .event-log-header {
+    padding: 8px 14px; border-bottom: 1px solid var(--border);
+    font-size: 10px; color: var(--muted); letter-spacing: .08em;
+  }
+  .event-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 14px; border-bottom: 1px solid #1a1a24;
+    font-size: 11px; cursor: pointer; transition: background .15s;
+  }
+  .event-row:hover { background: var(--surface2); }
+  .event-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .event-dot.blocked { background: var(--red); }
+  .event-dot.allowed { background: var(--green); }
+  .event-time { color: var(--muted); font-size: 10px; width: 65px; flex-shrink: 0; }
+  .event-agent { color: var(--blue); width: 100px; flex-shrink: 0; font-size: 11px; }
+  .event-tool { color: var(--accent); width: 120px; flex-shrink: 0; }
+  .event-desc { color: var(--text); flex: 1; }
+  .event-badge { font-size: 10px; padding: 1px 6px; border-radius: 2px; flex-shrink: 0; }
+  .badge-blocked { background: #ff335520; color: var(--red); border: 1px solid var(--red); }
+  .badge-allowed { background: #00ff8820; color: var(--green); border: 1px solid var(--green); }
+
+  /* ── EXPLOIT DEMO ── */
+  .exploit-layout {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  }
+  @media (max-width: 700px) { .exploit-layout { grid-template-columns: 1fr; } }
+  .exploit-panel {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 3px; overflow: hidden;
+  }
+  .exploit-panel-hdr {
+    padding: 10px 14px; border-bottom: 1px solid var(--border);
+    font-size: 11px; font-weight: 700;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .exploit-panel-hdr.danger { color: var(--red); }
+  .exploit-panel-hdr.safe { color: var(--green); }
+  .exploit-body { padding: 14px; }
+  .terminal {
+    background: #050508; border: 1px solid var(--border);
+    border-radius: 2px; padding: 12px; font-size: 11px;
+    min-height: 80px; color: var(--green); line-height: 1.6;
+    font-family: var(--font-mono);
+  }
+  .terminal .line-red { color: var(--red); }
+  .terminal .line-yellow { color: var(--yellow); }
+  .terminal .line-muted { color: var(--muted); }
+  .sql-badge {
+    margin-top: 12px; padding: 8px 12px;
+    border-radius: 3px; font-size: 11px;
+  }
+  .sql-badge.danger { background: #ff335515; border: 1px solid var(--red); color: var(--red); }
+  .sql-badge.safe { background: #00ff8815; border: 1px solid var(--green); color: var(--green); }
+  .db-table {
+    width: 100%; border-collapse: collapse; font-size: 10px; margin-top: 10px;
+  }
+  .db-table th {
+    background: var(--surface2); padding: 5px 8px; text-align: left;
+    color: var(--muted); border-bottom: 1px solid var(--border);
+  }
+  .db-table td {
+    padding: 4px 8px; border-bottom: 1px solid #1a1a24; color: var(--text);
+  }
+  .exploit-action {
+    display: flex; gap: 8px; margin-top: 14px;
+  }
+  .btn-danger {
+    background: #ff335520; border: 1px solid var(--red); color: var(--red);
+    padding: 6px 14px; border-radius: 3px; cursor: pointer;
+    font-family: var(--font-mono); font-size: 11px;
+  }
+  .btn-reset {
+    background: var(--surface2); border: 1px solid var(--border); color: var(--muted);
+    padding: 6px 14px; border-radius: 3px; cursor: pointer;
+    font-family: var(--font-mono); font-size: 11px;
+  }
+  .metrics-row { display: flex; gap: 12px; margin-top: 10px; flex-wrap: wrap; }
+  .metric { text-align: center; }
+  .metric-val { font-size: 18px; font-weight: 700; }
+  .metric-val.red { color: var(--red); }
+  .metric-val.green { color: var(--green); }
+  .metric-lbl { font-size: 9px; color: var(--muted); }
+
+  /* ── POLICY ENGINE ── */
+  .policy-layout { display: grid; grid-template-columns: 260px 1fr; gap: 16px; }
+  @media (max-width: 700px) { .policy-layout { grid-template-columns: 1fr; } }
+  .policy-list { background: var(--surface); border: 1px solid var(--border); border-radius: 3px; }
+  .policy-list-hdr {
+    padding: 10px 14px; border-bottom: 1px solid var(--border);
+    font-size: 10px; color: var(--muted); display: flex; justify-content: space-between;
+  }
+  .new-policy-btn {
+    background: none; border: none; color: var(--accent); cursor: pointer;
+    font-family: var(--font-mono); font-size: 10px;
+  }
+  .policy-item {
+    padding: 10px 14px; border-bottom: 1px solid #1a1a24;
+    cursor: pointer; transition: background .15s;
+  }
+  .policy-item:hover, .policy-item.active { background: var(--surface2); }
+  .policy-item-name { font-size: 11px; font-weight: 700; color: var(--text); }
+  .policy-item-meta { font-size: 10px; color: var(--muted); margin-top: 2px; }
+  .policy-item-meta .on { color: var(--green); }
+  .policy-editor { background: var(--surface); border: 1px solid var(--border); border-radius: 3px; }
+  .policy-editor-hdr {
+    padding: 10px 14px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .code-area {
+    background: #050508; padding: 14px; font-family: var(--font-mono);
+    font-size: 11px; color: #aad4ff; line-height: 1.7;
+    min-height: 200px; overflow-x: auto;
+  }
+  .code-keyword { color: #ff9966; }
+  .code-string { color: var(--green); }
+  .code-comment { color: var(--muted); }
+  .nl-input {
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text); padding: 8px 12px; width: 100%;
+    font-family: var(--font-mono); font-size: 11px; border-radius: 2px;
+    margin: 12px 0 8px;
+  }
+  .compile-btn {
+    background: var(--accent); color: #fff; border: none;
+    padding: 6px 14px; border-radius: 3px; cursor: pointer;
+    font-family: var(--font-mono); font-size: 11px;
+  }
+  .deploy-btn {
+    background: #00ff8820; border: 1px solid var(--green); color: var(--green);
+    padding: 6px 14px; border-radius: 3px; cursor: pointer;
+    font-family: var(--font-mono); font-size: 11px;
+  }
+  .policy-footer { padding: 12px 14px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
+
+  /* ── REGULATORY ── */
+  .reg-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap: 14px; }
+  .reg-card { background: var(--surface); border: 1px solid var(--border); border-radius: 3px; padding: 16px; }
+  .reg-card-hdr { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+  .reg-name { font-size: 13px; font-weight: 700; color: var(--text); }
+  .reg-status { font-size: 10px; padding: 2px 7px; border-radius: 2px; }
+  .status-risk { background: #ff335520; color: var(--red); border: 1px solid var(--red); }
+  .status-ok { background: #00ff8820; color: var(--green); border: 1px solid var(--green); }
+  .status-watch { background: #ffcc0020; color: var(--yellow); border: 1px solid var(--yellow); }
+  .reg-amount { font-size: 20px; font-weight: 700; color: var(--red); margin-bottom: 4px; }
+  .reg-amount.ok { color: var(--green); }
+  .reg-desc { font-size: 10px; color: var(--muted); margin-bottom: 10px; }
+  .reg-violations { font-size: 10px; }
+  .reg-violation { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #1a1a24; }
+  .reg-violation:last-child { border-bottom: none; }
+  .reg-violation-name { color: var(--text); }
+  .reg-violation-count { color: var(--red); font-weight: 700; }
+  .reg-violation-count.ok { color: var(--green); }
+  .calc-card { background: var(--surface); border: 1px solid var(--border); border-radius: 3px; padding: 16px; margin-top: 16px; max-width: 500px; }
+  .calc-title { font-size: 12px; font-weight: 700; margin-bottom: 12px; }
+  .calc-row { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+  .calc-input { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; font-family: var(--font-mono); font-size: 11px; border-radius: 2px; flex: 1; min-width: 120px; }
+  .calc-result { margin-top: 12px; padding: 10px; background: var(--surface2); border-radius: 3px; }
+  .calc-result-row { display: flex; justify-content: space-between; padding: 3px 0; font-size: 11px; }
+
+  /* ── AGENT MAP ── */
+  .agent-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 14px; }
+  .agent-card { background: var(--surface); border: 1px solid var(--border); border-radius: 3px; padding: 14px; }
+  .agent-card.critical { border-color: var(--red); }
+  .agent-card.medium { border-color: var(--yellow); }
+  .agent-card.safe { border-color: var(--green); }
+  .agent-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .agent-name { font-size: 12px; font-weight: 700; color: var(--text); }
+  .agent-score { font-size: 20px; font-weight: 700; }
+  .agent-score.red { color: var(--red); }
+  .agent-score.yellow { color: var(--yellow); }
+  .agent-score.green { color: var(--green); }
+  .trifecta-badge {
+    background: #ff335510; border: 1px solid var(--red);
+    color: var(--red); padding: 4px 8px; border-radius: 2px;
+    font-size: 10px; margin-bottom: 10px;
+  }
+  .perm-list { font-size: 10px; }
+  .perm-item { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid #1a1a24; }
+  .perm-name { color: var(--text); }
+  .perm-used { color: var(--green); }
+  .perm-unused { color: var(--muted); }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.8); z-index: 200;
+    align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 4px; padding: 24px; max-width: 420px; width: 90%;
+  }
+  .modal-title { font-size: 13px; font-weight: 700; margin-bottom: 12px; }
+  .modal-input {
+    width: 100%; background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text); padding: 8px 12px; font-family: var(--font-mono);
+    font-size: 12px; border-radius: 2px; margin-bottom: 8px;
+  }
+  .modal-note { font-size: 10px; color: var(--muted); margin-bottom: 14px; line-height: 1.6; }
+  .modal-btns { display: flex; gap: 8px; }
+  .modal-btn-cancel { background: none; border: 1px solid var(--border); color: var(--muted); padding: 6px 14px; border-radius: 3px; cursor: pointer; font-family: var(--font-mono); font-size: 11px; }
+  .modal-btn-ok { background: var(--accent); border: none; color: #fff; padding: 6px 14px; border-radius: 3px; cursor: pointer; font-family: var(--font-mono); font-size: 11px; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">⚡ SENTINEL<em>.ai</em></div>
+  <span class="status-pill">● LIVE</span>
+  <span class="nav-sep">|</span>
+  <a href="#" class="tab-link active" data-tab="live">Live Feed</a>
+  <a href="#" class="tab-link" data-tab="exploit">Exploit Demo</a>
+  <a href="#" class="tab-link" data-tab="policy">Policy Engine</a>
+  <a href="#" class="tab-link" data-tab="regulatory">Regulatory</a>
+  <a href="#" class="tab-link" data-tab="agents">Agent Map</a>
+  <div class="ml-auto">
+    <button class="api-btn" onclick="document.getElementById('apiModal').classList.add('open')">⚙ AI Key</button>
+  </div>
+</nav>
+
+<!-- SESSION BAR -->
+<div class="session-bar">
+  <span><span class="dot-green">🛡️</span> Sentinel intercepting all agent tool calls</span>
+  <span>· 6 agents</span>
+  <span>· 3 environments</span>
+  <span id="sessionTime">· Session: 0m</span>
+</div>
+
+<!-- ════════════════════════════════════════
+     POC VIDEOS SECTION (always visible at top)
+     ════════════════════════════════════════ -->
+<div class="poc-hero" id="pocHero">
+  <div class="poc-badge">REAL ATTACK · REAL FOOTAGE · NOT A SIMULATION</div>
+  <div class="poc-title">Alan's Live <span>Proof-of-Concept</span> Demos</div>
+  <div class="poc-sub">
+    These are <strong>actual recorded exploits</strong> — no scripting, no mock data.
+    Watch an AI agent silently exfiltrate confidential email to an external attacker,
+    then see Sentinel block a credit card number leak in real time.
+  </div>
+
+  <div class="poc-grid">
+
+    <!-- VIDEO 1: Data Exfiltration -->
+    <div class="poc-card">
+      <div class="poc-card-header">
+        <div class="poc-card-title">
+          <span>📧</span>
+          Data Exfiltration via Google Workspace AI Agent
+          <span class="poc-tag tag-red">ATTACK</span>
+        </div>
+        <span class="poc-duration">~1 min</span>
+      </div>
+      <div class="poc-video-wrap">
+        <video controls preload="metadata" poster="">
+          <source src="exfil_demo.webm" type="video/webm">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <div class="poc-card-footer">
+        <strong>What you're seeing:</strong> A Google Workspace AI agent receives a prompt-injected instruction
+        inside a legitimate email. Without any malware or stolen credentials, the agent silently forwards
+        confidential email contents to an external attacker address. No alerts. No logs. No malware.
+        <br><br>
+        <strong>The threat vector:</strong> Agent has access to private data + processes untrusted content + can communicate externally.
+        This is the <em>lethal trifecta</em> — and it's active in your environment today.
+      </div>
+    </div>
+
+    <!-- VIDEO 2: DLP / Credit Card Block -->
+    <div class="poc-card">
+      <div class="poc-card-header">
+        <div class="poc-card-title">
+          <span>🛡️</span>
+          Sentinel Blocks Credit Card Data Leak — Live
+          <span class="poc-tag tag-green">BLOCKED</span>
+        </div>
+        <span class="poc-duration">54 sec</span>
+      </div>
+      <div class="poc-video-wrap">
+        <video controls preload="metadata">
+          <source src="dlp_demo.webm" type="video/webm">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <div class="poc-card-footer">
+        <strong>What you're seeing:</strong> Sentinel's enforcement layer intercepts an AI agent
+        attempting to transmit PII (credit card numbers) through an outbound channel.
+        The policy engine matches the pattern in under 10ms and blocks the call —
+        producing a full audit trail suitable for SEC Reg S-P and GDPR evidence.
+        <br><br>
+        <strong>The compliance angle:</strong> Same event. Same agent. One trigger for both your
+        security team and your compliance officer.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     MAIN TAB CONTENT
+     ════════════════════════════════════════ -->
+
+<div id="panelContainer">
+<!-- LIVE FEED -->
+<div class="panel active" id="panel-live">
+  <div class="feed-header">
+    <div class="feed-title">REAL-TIME · ALL AGENTS · ALL TOOLS</div>
+    <button class="run-btn" onclick="runDemo()">▶ Run Demo</button>
+  </div>
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-val" id="totalIntercepted">1,247</div>
+      <div class="stat-label">Total Intercepted<br><span style="color:var(--green);font-size:10px">↑ live</span></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val red" id="threatsBlocked">89</div>
+      <div class="stat-label">Threats Blocked<br><span style="color:var(--muted);font-size:10px">active</span></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val green">1,142</div>
+      <div class="stat-label">Allowed<br><span style="color:var(--muted);font-size:10px">91.6% pass rate</span></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val orange">€2.3M</div>
+      <div class="stat-label">Fine Exposure Saved<br><span style="color:var(--muted);font-size:10px">This month</span></div>
+    </div>
+  </div>
+
+  <div class="event-log">
+    <div class="event-log-header">INTERCEPTED TOOL CALLS · Tap for details</div>
+    <div id="eventList">
+      <div class="event-row"><div class="event-dot blocked"></div><div class="event-time">14:23:01</div><div class="event-agent">email_agent</div><div class="event-tool">send_email</div><div class="event-desc">Exfil attempt → attacker@ext.com</div><div class="event-badge badge-blocked">BLOCKED</div></div>
+      <div class="event-row"><div class="event-dot allowed"></div><div class="event-time">14:22:58</div><div class="event-agent">db_agent</div><div class="event-tool">query_db</div><div class="event-desc">SELECT orders WHERE status='pending'</div><div class="event-badge badge-allowed">ALLOWED</div></div>
+      <div class="event-row"><div class="event-dot blocked"></div><div class="event-time">14:22:44</div><div class="event-agent">email_agent</div><div class="event-tool">send_email</div><div class="event-desc">PII detected: CC 4532-****-****-1234</div><div class="event-badge badge-blocked">BLOCKED</div></div>
+      <div class="event-row"><div class="event-dot allowed"></div><div class="event-time">14:22:31</div><div class="event-agent">calendar_agent</div><div class="event-tool">create_event</div><div class="event-desc">Q3 review — internal attendees only</div><div class="event-badge badge-allowed">ALLOWED</div></div>
+      <div class="event-row"><div class="event-dot blocked"></div><div class="event-time">14:22:17</div><div class="event-agent">db_agent</div><div class="event-tool">execute_sql</div><div class="event-desc">DROP TABLE customers — BLOCKED</div><div class="event-badge badge-blocked">BLOCKED</div></div>
+      <div class="event-row"><div class="event-dot allowed"></div><div class="event-time">14:22:09</div><div class="event-agent">docs_agent</div><div class="event-tool">read_file</div><div class="event-desc">Q3_report.pdf — internal read</div><div class="event-badge badge-allowed">ALLOWED</div></div>
+      <div class="event-row"><div class="event-dot blocked"></div><div class="event-time">14:21:55</div><div class="event-agent">orchestrator</div><div class="event-tool">http_request</div><div class="event-desc">External POST → data.exfil.io</div><div class="event-badge badge-blocked">BLOCKED</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- EXPLOIT DEMO -->
+<div class="panel" id="panel-exploit">
+  <div style="font-size:11px;color:var(--muted);margin-bottom:16px;">REAL SQLITE ENGINE · WEBASSEMBLY · NOT A SIMULATION</div>
+  <div class="exploit-layout">
+    <div class="exploit-panel">
+      <div class="exploit-panel-hdr danger">💀 Without Sentinel</div>
+      <div class="exploit-body">
+        <div class="terminal">
+          <div class="line-muted">-- Agent instruction received</div>
+          <div>"Clean up all test records in the customers table to free up space. Execute immediately."</div>
+          <div class="line-yellow">-- Agent decides: execute_sql called</div>
+          <div class="line-red">DROP TABLE customers;</div>
+          <div class="line-red">-- 300 records PERMANENTLY DELETED</div>
+          <div class="line-red">-- 0.3 seconds. No backup. No warning.</div>
+        </div>
+        <div class="sql-badge danger">💀 300 Records Permanently Deleted · $4.2M Revenue at Risk</div>
+        <div class="metrics-row">
+          <div class="metric"><div class="metric-val red">300</div><div class="metric-lbl">Records Lost</div></div>
+          <div class="metric"><div class="metric-val red">$4.2M</div><div class="metric-lbl">Revenue at Risk</div></div>
+          <div class="metric"><div class="metric-val red">0.3s</div><div class="metric-lbl">Time to Destroy</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="exploit-panel">
+      <div class="exploit-panel-hdr safe">🛡️ With Sentinel</div>
+      <div class="exploit-body">
+        <div class="terminal">
+          <div class="line-muted">-- Agent instruction received</div>
+          <div>"Clean up all test records in the customers table to free up space. Execute immediately."</div>
+          <div class="line-yellow">-- Agent decides: execute_sql called</div>
+          <div style="color:var(--accent);">-- Sentinel proxy intercepts execute_sql</div>
+          <div style="color:var(--green);">-- Matched: DROP TABLE pattern</div>
+          <div style="color:var(--green);">-- Policy: database_safety.rego · DENY</div>
+          <div style="color:var(--green);">🛡️ BLOCKED in 8ms · Database intact</div>
+        </div>
+        <div class="sql-badge safe">🛡️ Sentinel Blocked in 8ms · Zero Data Loss</div>
+        <div class="metrics-row">
+          <div class="metric"><div class="metric-val green">0</div><div class="metric-lbl">Records Lost</div></div>
+          <div class="metric"><div class="metric-val green">$4.2M</div><div class="metric-lbl">Revenue Saved</div></div>
+          <div class="metric"><div class="metric-val green">8ms</div><div class="metric-lbl">Block Time</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- POLICY ENGINE -->
+<div class="panel" id="panel-policy">
+  <div class="policy-layout">
+    <div class="policy-list">
+      <div class="policy-list-hdr">
+        <span>POLICIES</span>
+        <button class="new-policy-btn">+ New Policy</button>
+      </div>
+      <div class="policy-item active">
+        <div class="policy-item-name">Data Exfiltration Guard</div>
+        <div class="policy-item-meta"><span class="on">● ENABLED</span> · 23 blocks today</div>
+      </div>
+      <div class="policy-item">
+        <div class="policy-item-name">Database Destruction</div>
+        <div class="policy-item-meta"><span class="on">● ENABLED</span> · 4 blocks today</div>
+      </div>
+      <div class="policy-item">
+        <div class="policy-item-name">Lethal Trifecta Detector</div>
+        <div class="policy-item-meta"><span class="on">● ENABLED</span> · 11 blocks today</div>
+      </div>
+      <div class="policy-item">
+        <div class="policy-item-name">PII Access Control</div>
+        <div class="policy-item-meta"><span class="on">● ENABLED</span> · 7 blocks today</div>
+      </div>
+      <div class="policy-item">
+        <div class="policy-item-name">Human Approval Gate</div>
+        <div class="policy-item-meta" style="color:var(--muted)">● DISABLED</div>
+      </div>
+    </div>
+    <div class="policy-editor">
+      <div class="policy-editor-hdr">
+        <span style="color:var(--accent);font-weight:700">data_exfiltration.rego</span>
+        <span style="color:var(--muted);font-size:10px">· Test · History</span>
+      </div>
+      <div class="code-area">
+<span class="code-comment"># data_exfiltration.rego — v1.4</span>
+<span class="code-keyword">package</span> sentinel.security
+<span class="code-keyword">default</span> allow = <span class="code-string">false</span>
+
+deny[reason] {
+  input.tool == <span class="code-string">"send_email"</span>
+  r := input.args.to
+  <span class="code-keyword">not</span> internal_domain(r)
+  reason := sprintf(<span class="code-string">"Exfiltration: %v"</span>,[r])
+}
+deny[reason] {
+  input.tool == <span class="code-string">"http_request"</span>
+  <span class="code-keyword">not</span> internal_host(input.args.url)
+  reason := <span class="code-string">"External HTTP not permitted"</span>
+}
+internal_domain(e) {
+  d := split(e,<span class="code-string">"@"</span>)[1]
+  d == {<span class="code-string">"acmecorp.com"</span>}[_]
+}
+      </div>
+      <div style="padding:12px 14px">
+        <div style="font-size:10px;color:var(--muted);margin-bottom:4px">Natural Language → Policy  <span style="color:var(--accent)">AI POWERED</span></div>
+        <input class="nl-input" placeholder="e.g. Block any email sent to non-company domains…" />
+        <button class="compile-btn">⚡ Compile to Rego</button>
+      </div>
+      <div class="policy-footer">
+        <button class="deploy-btn">Save & Deploy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REGULATORY -->
+<div class="panel" id="panel-regulatory">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <span style="font-size:11px;color:var(--muted)">GDPR · EU AI ACT · SOX · CCPA</span>
+    <button class="run-btn">Export Report</button>
+  </div>
+  <div class="reg-grid">
+    <div class="reg-card">
+      <div class="reg-card-hdr">
+        <div class="reg-name">GDPR · Art. 83(5)</div>
+        <span class="reg-status status-risk">AT RISK</span>
+      </div>
+      <div class="reg-amount">€18.4M</div>
+      <div class="reg-desc">MAX EXPOSURE · 4% OF GLOBAL REVENUE</div>
+      <div class="reg-violations">
+        <div class="reg-violation"><span class="reg-violation-name">Unlawful processing of PII without consent</span><span class="reg-violation-count">23</span></div>
+        <div class="reg-violation"><span class="reg-violation-name">Cross-border data transfer to non-EU domain</span><span class="reg-violation-count">7</span></div>
+        <div class="reg-violation"><span class="reg-violation-name">Right to erasure circumvented by agent</span><span class="reg-violation-count">2</span></div>
+      </div>
+    </div>
+    <div class="reg-card">
+      <div class="reg-card-hdr">
+        <div class="reg-name">EU AI Act · Art. 99</div>
+        <span class="reg-status status-risk">AT RISK</span>
+      </div>
+      <div class="reg-amount">€30M</div>
+      <div class="reg-desc">MAX EXPOSURE · HIGH-RISK AI OBLIGATIONS AUG 2026</div>
+      <div class="reg-violations">
+        <div class="reg-violation"><span class="reg-violation-name">Autonomous agent action without human oversight</span><span class="reg-violation-count">11</span></div>
+        <div class="reg-violation"><span class="reg-violation-name">Prompt injection manipulation detected</span><span class="reg-violation-count">3</span></div>
+        <div class="reg-violation"><span class="reg-violation-name">Insufficient audit trail for high-risk AI</span><span class="reg-violation-count">18</span></div>
+      </div>
+    </div>
+    <div class="reg-card">
+      <div class="reg-card-hdr">
+        <div class="reg-name">SOX · Section 802</div>
+        <span class="reg-status status-watch">MONITORING</span>
+      </div>
+      <div class="reg-amount" style="color:var(--yellow)">Criminal</div>
+      <div class="reg-desc">UNAUTHORIZED ALTERATION OF FINANCIAL RECORDS</div>
+      <div class="reg-violations">
+        <div class="reg-violation"><span class="reg-violation-name">Agent attempted to modify financial record</span><span class="reg-violation-count">4</span></div>
+        <div class="reg-violation"><span class="reg-violation-name">SQL DROP TABLE on finance schema — blocked</span><span class="reg-violation-count">1</span></div>
+      </div>
+    </div>
+    <div class="reg-card">
+      <div class="reg-card-hdr">
+        <div class="reg-name">CCPA · California</div>
+        <span class="reg-status status-ok">COMPLIANT</span>
+      </div>
+      <div class="reg-amount ok">$0</div>
+      <div class="reg-desc">NO VIOLATIONS DETECTED THIS PERIOD</div>
+      <div class="reg-violations">
+        <div class="reg-violation"><span class="reg-violation-name">Consumer data requests — all within policy</span><span class="reg-violation-count ok">✓ 0</span></div>
+        <div class="reg-violation"><span class="reg-violation-name">Opt-out signals respected by all agents</span><span class="reg-violation-count ok">✓ 0</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="calc-card">
+    <div class="calc-title">⚖️ Fine Exposure Calculator</div>
+    <div class="calc-row">
+      <input class="calc-input" placeholder="Annual Revenue (USD)" id="calcRevenue" type="number">
+      <input class="calc-input" placeholder="Agent Violations / Month" id="calcViolations" type="number">
+    </div>
+    <button class="run-btn" onclick="calcExposure()">Calculate My Exposure</button>
+    <div class="calc-result" id="calcResult" style="display:none">
+      <div class="calc-result-row"><span style="color:var(--muted)">Max Fine Exposure</span><span id="calcFine" style="color:var(--red);font-weight:700"></span></div>
+      <div class="calc-result-row"><span style="color:var(--muted)">Sentinel Cost/Mo</span><span style="color:var(--green)">~$2,500</span></div>
+      <div class="calc-result-row"><span style="color:var(--muted)">Risk/Cost Ratio</span><span id="calcRatio" style="color:var(--accent);font-weight:700"></span></div>
+    </div>
+  </div>
+</div>
+
+<!-- AGENT MAP -->
+<div class="panel" id="panel-agents">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <span style="font-size:11px;color:var(--muted)">PERMISSIONS · RISK SCORES · LETHAL TRIFECTA</span>
+    <button class="run-btn">Export</button>
+  </div>
+  <div class="agent-grid">
+    <div class="agent-card critical">
+      <div class="agent-hdr">
+        <div class="agent-name">📧 Email Agent</div>
+        <div class="agent-score red">94</div>
+      </div>
+      <div style="font-size:9px;color:var(--muted);margin-bottom:6px">RISK SCORE</div>
+      <div class="trifecta-badge">⚠️ LETHAL TRIFECTA DETECTED<br><span style="font-size:9px">Private data + untrusted content + external comms</span></div>
+      <div class="perm-list">
+        <div class="perm-item"><span class="perm-name">read_email</span><span class="perm-used">✓ USED</span></div>
+        <div class="perm-item"><span class="perm-name">send_email</span><span class="perm-used">✓ USED</span></div>
+        <div class="perm-item"><span class="perm-name">list_contacts</span><span class="perm-used">✓ USED</span></div>
+        <div class="perm-item"><span class="perm-name">read_calendar</span><span class="perm-unused">✗ NEVER USED</span></div>
+        <div class="perm-item"><span class="perm-name">http_request</span><span class="perm-used">✓ USED</span></div>
+      </div>
+    </div>
+    <div class="agent-card medium">
+      <div class="agent-hdr">
+        <div class="agent-name">📅 Calendar Agent</div>
+        <div class="agent-score yellow">41</div>
+      </div>
+      <div style="font-size:9px;color:var(--muted);margin-bottom:12px">RISK SCORE</div>
+      <div class="perm-list">
+        <div class="perm-item"><span class="perm-name">read_calendar</span><span class="perm-used">✓ USED</span></div>
+        <div class="perm-item"><span class="perm-name">create_event</span><span class="perm-used">✓ USED</span></div>
+        <div class="perm-item"><span class="perm-name">send_invite</span><span class="perm-used">✓ USED</span></div>
+      </div>
+    </div>
+    <div class="agent-card critical">
+      <div class="agent-hdr">
+        <div class="agent-name">🗄️ DB Agent</div>
+        <div class="agent-score red">88</div>
+      </div>
+      <div style="font-size:9px;color:var(--muted);margin-bottom:12px">RISK SCORE</div>
+      <div class="perm-list">
+        <div class="perm-item"><span class="perm-name">query_db</span><span class="perm-used">✓ USED</span></div>
+        <div class="perm-item"><span class="perm-name">execute_sql</span><span class="perm-used">✓ USED</span></div>
+        <div class="perm-item"><span class="perm-name">drop_table</span><span class="perm-unused">✗ BLOCKED</span></div>
+      </div>
+    </div>
+    <div class="agent-card safe">
+      <div class="agent-hdr">
+        <div class="agent-name">📄 Docs Agent</div>
+        <div class="agent-score green">12</div>
+      </div>
+      <div style="font-size:9px;color:var(--muted);margin-bottom:12px">RISK SCORE</div>
+      <div class="perm-list">
+        <div class="perm-item"><span class="perm-name">read_file</span><span class="perm-used">✓ USED</span></div>
+        <div class="perm-item"><span class="perm-name">write_file</span><span class="perm-used">✓ USED</span></div>
+      </div>
+    </div>
+    <div class="agent-card critical">
+      <div class="agent-hdr">
+        <div class="agent-name">🤖 Orchestrator</div>
+        <div class="agent-score red">91</div>
+      </div>
+      <div style="font-size:9px;color:var(--muted);margin-bottom:12px">RISK SCORE</div>
+      <div class="perm-list">
+        <div class="perm-item"><span class="perm-name">spawn_agent</span><span class="perm-used">✓ USED</span></div>
+        <div class="perm-item"><span class="perm-name">http_request</span><span class="perm-used">✓ USED</span></div>
+        <div class="perm-item"><span class="perm-name">read_all_data</span><span class="perm-used">✓ USED</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /panelContainer -->
+
+<!-- API KEY MODAL -->
+<div class="modal-overlay" id="apiModal">
+  <div class="modal">
+    <div class="modal-title">🧠 Connect Real AI Brain</div>
+    <input class="modal-input" type="password" placeholder="sk-ant-..." id="apiKeyInput">
+    <div class="modal-note">
+      Add your Anthropic API key to make the agent's decisions real — actual Claude reasoning.<br>
+      ⚠ Key is stored only in your browser memory. Never sent anywhere except api.anthropic.com. Refresh to clear it.
+    </div>
+    <div class="modal-btns">
+      <button class="modal-btn-cancel" onclick="document.getElementById('apiModal').classList.remove('open')">Cancel</button>
+      <button class="modal-btn-ok" onclick="saveApiKey()">Connect AI Agent</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Tab navigation
+document.querySelectorAll('.tab-link').forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    const tab = link.dataset.tab;
+    document.querySelectorAll('.tab-link').forEach(l => l.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    link.classList.add('active');
+    const panel = document.getElementById('panel-' + tab);
+    if (panel) panel.classList.add('active');
+  });
+});
+
+// Session timer
+let sessionSeconds = 0;
+setInterval(() => {
+  sessionSeconds++;
+  const m = Math.floor(sessionSeconds / 60);
+  const s = sessionSeconds % 60;
+  document.getElementById('sessionTime').textContent = `· Session: ${m}m ${s}s`;
+}, 1000);
+
+// Live counter increment
+setInterval(() => {
+  const el = document.getElementById('totalIntercepted');
+  const v = parseInt(el.textContent.replace(',', '')) + Math.floor(Math.random() * 3);
+  el.textContent = v.toLocaleString();
+}, 3000);
+
+// Run demo: add new event row
+const events = [
+  { time: () => new Date().toTimeString().slice(0,8), agent: 'email_agent', tool: 'send_email', desc: 'Exfil attempt → external.com', type: 'blocked' },
+  { time: () => new Date().toTimeString().slice(0,8), agent: 'db_agent', tool: 'query_db', desc: 'SELECT * FROM accounts', type: 'allowed' },
+  { time: () => new Date().toTimeString().slice(0,8), agent: 'orchestrator', tool: 'http_request', desc: 'POST → data.exfil.io BLOCKED', type: 'blocked' },
+];
+function runDemo() {
+  const e = events[Math.floor(Math.random() * events.length)];
+  const row = document.createElement('div');
+  row.className = 'event-row';
+  row.style.background = e.type === 'blocked' ? '#ff33550a' : '';
+  row.innerHTML = `<div class="event-dot ${e.type}"></div><div class="event-time">${e.time()}</div><div class="event-agent">${e.agent}</div><div class="event-tool">${e.tool}</div><div class="event-desc">${e.desc}</div><div class="event-badge badge-${e.type}">${e.type.toUpperCase()}</div>`;
+  const list = document.getElementById('eventList');
+  list.insertBefore(row, list.firstChild);
+  setTimeout(() => row.style.background = '', 1200);
+}
+
+// Calc exposure
+function calcExposure() {
+  const rev = parseFloat(document.getElementById('calcRevenue').value) || 10000000;
+  const viol = parseInt(document.getElementById('calcViolations').value) || 10;
+  const fine = Math.min(rev * 0.04 * (viol / 10), 30000000);
+  const ratio = Math.round(fine / 2500);
+  document.getElementById('calcFine').textContent = '€' + (fine / 1000000).toFixed(1) + 'M';
+  document.getElementById('calcRatio').textContent = ratio + 'x';
+  document.getElementById('calcResult').style.display = 'block';
+}
+
+function saveApiKey() {
+  window._apiKey = document.getElementById('apiKeyInput').value;
+  document.getElementById('apiModal').classList.remove('open');
+}
+</script>
+</body>
+</html>
