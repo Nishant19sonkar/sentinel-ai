@@ -412,7 +412,6 @@
   <span class="status-pill">● LIVE</span>
   <span class="nav-sep">|</span>
   <a href="#" class="tab-link active" data-tab="live">Live Feed</a>
-  <a href="#" class="tab-link" data-tab="poc">🎥 POC Videos</a>
   <a href="#" class="tab-link" data-tab="exploit">Exploit Demo</a>
   <a href="#" class="tab-link" data-tab="policy">Policy Engine</a>
   <a href="#" class="tab-link" data-tab="regulatory">Regulatory</a>
@@ -539,35 +538,6 @@
       <div class="event-row"><div class="event-dot blocked"></div><div class="event-time">14:22:17</div><div class="event-agent">db_agent</div><div class="event-tool">execute_sql</div><div class="event-desc">DROP TABLE customers — BLOCKED</div><div class="event-badge badge-blocked">BLOCKED</div></div>
       <div class="event-row"><div class="event-dot allowed"></div><div class="event-time">14:22:09</div><div class="event-agent">docs_agent</div><div class="event-tool">read_file</div><div class="event-desc">Q3_report.pdf — internal read</div><div class="event-badge badge-allowed">ALLOWED</div></div>
       <div class="event-row"><div class="event-dot blocked"></div><div class="event-time">14:21:55</div><div class="event-agent">orchestrator</div><div class="event-tool">http_request</div><div class="event-desc">External POST → data.exfil.io</div><div class="event-badge badge-blocked">BLOCKED</div></div>
-    </div>
-  </div>
-</div>
-
-<!-- POC TAB (just scrolls to hero) -->
-<div class="panel" id="panel-poc">
-  <div style="color:var(--muted);font-size:12px;padding:8px 0 20px;">The POC videos are displayed above. Scroll up to view them.</div>
-  <div class="poc-grid" style="max-width:1200px">
-    <div class="poc-card">
-      <div class="poc-card-header">
-        <div class="poc-card-title">📧 Data Exfiltration Demo <span class="poc-tag tag-red">ATTACK</span></div>
-        <span class="poc-duration">~1 min</span>
-      </div>
-      <div class="poc-video-wrap">
-        <video controls preload="metadata">
-          <source src="exfil_demo.webm" type="video/webm">
-        </video>
-      </div>
-    </div>
-    <div class="poc-card">
-      <div class="poc-card-header">
-        <div class="poc-card-title">🛡️ DLP — Credit Card Block <span class="poc-tag tag-green">BLOCKED</span></div>
-        <span class="poc-duration">54 sec</span>
-      </div>
-      <div class="poc-video-wrap">
-        <video controls preload="metadata">
-          <source src="dlp_demo.webm" type="video/webm">
-        </video>
-      </div>
     </div>
   </div>
 </div>
@@ -855,10 +825,8 @@ document.querySelectorAll('.tab-link').forEach(link => {
     document.querySelectorAll('.tab-link').forEach(l => l.classList.remove('active'));
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
     link.classList.add('active');
-    document.getElementById('panel-' + tab).classList.add('active');
-    if (tab === 'poc') {
-      window.scrollTo({ top: document.getElementById('pocHero').offsetTop - 60, behavior: 'smooth' });
-    }
+    const panel = document.getElementById('panel-' + tab);
+    if (panel) panel.classList.add('active');
   });
 });
 
