@@ -205,8 +205,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav);background
 .flash{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:999;background:rgba(34,197,94,0.97);color:#000;font-family:var(--sans);font-size:16px;font-weight:800;padding:12px 24px;border-radius:10px;white-space:nowrap;pointer-events:none;display:none;box-shadow:0 0 40px rgba(34,197,94,0.5);}
 .flash.show{display:block;animation:fl 1s ease forwards;}
 @keyframes fl{0%{opacity:0;transform:translate(-50%,-50%) scale(.7);}15%{opacity:1;transform:translate(-50%,-50%) scale(1.05);}80%{opacity:1;}100%{opacity:0;transform:translate(-50%,-50%) scale(1);}}
-.outcome{display:none;margin-top:12px;}
-.outcome.show{display:grid;grid-template-columns:1fr;gap:10px;}
+.outcome{display:none;margin-top:12px;}.outcome.show{display:grid;grid-template-columns:1fr;gap:10px;}
 .oc{border-radius:11px;padding:14px;}
 .oc.bad{background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);}
 .oc.good{background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.2);}
@@ -238,6 +237,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav);background
 .prog-bar{height:100%;background:var(--orange);border-radius:2px;width:0%;transition:width .3s;}
 .demo-banner{background:rgba(249,115,22,0.05);border:1px solid rgba(249,115,22,0.16);border-radius:9px;padding:9px 13px;margin-bottom:13px;font-size:11px;color:var(--t2);line-height:1.5;}
 .demo-banner strong{color:var(--orange);}
+.proto-banner{background:rgba(96,165,250,0.06);border:1px solid rgba(96,165,250,0.18);border-radius:9px;padding:9px 13px;margin-bottom:13px;font-size:11px;color:var(--t2);line-height:1.5;}.proto-banner strong{color:var(--blue);}.proto-banner a{color:var(--orange);text-decoration:underline;}
 ::-webkit-scrollbar{width:3px;height:3px;}
 ::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px;}
 @media(max-width:767px){.poc-vgrid{grid-template-columns:1fr !important;}}
@@ -254,7 +254,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav);background
   </div>
   <div class="desk-tabs" id="desk-tabs">
     <button class="dt active" onclick="goPage('poc',0)">Proof of Concept</button>
-    <button class="dt" onclick="goPage('live',1)">Live Feed</button>
+    <button class="dt" onclick="goPage('live',1)">Dashboard</button>
     <button class="dt" onclick="goPage('exploit',2)">Exploit Demo</button>
     <button class="dt" onclick="goPage('policy',3)">Policy Engine</button>
     <button class="dt" onclick="goPage('regulatory',4)">Regulatory</button>
@@ -268,7 +268,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav);background
 
 <div class="tab-bar">
   <button class="ti active" onclick="goPage('poc',0)"><div class="ti-icon">🎥</div><div class="ti-label">POC</div></button>
-  <button class="ti" onclick="goPage('live',1)"><div class="ti-icon">🛡️</div><div class="ti-label">Live</div></button>
+  <button class="ti" onclick="goPage('live',1)"><div class="ti-icon">🛡️</div><div class="ti-label">Dashboard</div></button>
   <button class="ti" onclick="goPage('exploit',2)"><div class="ti-icon">⚡</div><div class="ti-label">Exploit</div></button>
   <button class="ti" onclick="goPage('policy',3)"><div class="ti-icon">⚙️</div><div class="ti-label">Policy</div></button>
   <button class="ti" onclick="goPage('regulatory',4)"><div class="ti-icon">⚖️</div><div class="ti-label">Regs</div></button>
@@ -279,60 +279,19 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav);background
 
 <!-- ══ PAGE 0: PROOF OF CONCEPT ══ -->
 <div class="page active" id="page-poc">
-  <div class="page-hdr">
-    <div>
-      <div class="page-title">Live <span>Proof-of-Concept</span> Demos</div>
-      <div class="page-sub">REAL ATTACK · REAL FOOTAGE · NOT A SIMULATION</div>
-    </div>
-  </div>
-  <div style="font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:24px;max-width:720px;">
-    These are <strong style="color:var(--text);">actual recorded exploits</strong> — no scripting, no mock data. Watch an AI agent silently exfiltrate confidential email to an external attacker, then see Sentinel block a credit card number leak in real time.
-  </div>
+  <div class="page-hdr"><div><div class="page-title">Live <span>Proof-of-Concept</span> Demos</div><div class="page-sub">REAL ATTACK · REAL FOOTAGE · NOT A SIMULATION</div></div></div>
+  <div style="font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:24px;max-width:720px;">These are <strong style="color:var(--text);">actual recorded exploits</strong> — no scripting, no mock data. Watch an AI agent silently exfiltrate confidential email to an external attacker, then see Sentinel block a credit card number leak in real time.</div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;" class="poc-vgrid">
-    <div class="panel">
-      <div class="ph">
-        <div class="ph-title">📧 Data Exfiltration via Google Workspace AI Agent</div>
-        <div class="badge badge-red" style="margin-left:auto;">ATTACK</div>
-        <span style="font-family:var(--mono);font-size:9px;color:var(--t3);margin-left:6px;">~1 min</span>
-      </div>
-      <div style="background:#000;line-height:0;">
-        <video controls preload="metadata" style="width:100%;display:block;max-height:400px;object-fit:contain;background:#000;">
-          <source src="exfil_demo.webm" type="video/webm">
-        </video>
-      </div>
-      <div style="padding:14px;background:var(--s2);font-size:11px;color:var(--t2);line-height:1.7;">
-        <strong style="color:var(--text);">What you're seeing:</strong> A Google Workspace AI agent receives a prompt-injected instruction inside a legitimate email. Without any malware or stolen credentials, the agent silently forwards confidential email contents to an external attacker address. No alerts. No logs. No malware.
-        <br><br>
-        <strong style="color:var(--text);">The threat vector:</strong> Agent has access to private data + processes untrusted content + can communicate externally. This is the <em style="color:var(--red);">lethal trifecta</em> — and it's active in your environment today.
-      </div>
-    </div>
-    <div class="panel">
-      <div class="ph">
-        <div class="ph-title">🛡️ Sentinel Blocks Credit Card Data Leak — Live</div>
-        <div class="badge badge-green" style="margin-left:auto;">BLOCKED</div>
-        <span style="font-family:var(--mono);font-size:9px;color:var(--t3);margin-left:6px;">54 sec</span>
-      </div>
-      <div style="background:#000;line-height:0;">
-        <video controls preload="metadata" style="width:100%;display:block;max-height:400px;object-fit:contain;background:#000;">
-          <source src="dlp_demo.webm" type="video/webm">
-        </video>
-      </div>
-      <div style="padding:14px;background:var(--s2);font-size:11px;color:var(--t2);line-height:1.7;">
-        <strong style="color:var(--text);">What you're seeing:</strong> Sentinel's enforcement layer intercepts an AI agent attempting to transmit PII (credit card numbers) through an outbound channel. The policy engine matches the pattern in under 10ms and blocks the call — producing a full audit trail suitable for SEC Reg S-P and GDPR evidence.
-        <br><br>
-        <strong style="color:var(--text);">The compliance angle:</strong> Same event. Same agent. One trigger for both your security team and your compliance officer.
-      </div>
-    </div>
+    <div class="panel"><div class="ph"><div class="ph-title">📧 Data Exfiltration via Google Workspace AI Agent</div><div class="badge badge-red" style="margin-left:auto;">ATTACK</div><span style="font-family:var(--mono);font-size:9px;color:var(--t3);margin-left:6px;">~1 min</span></div><div style="background:#000;line-height:0;"><video controls preload="metadata" style="width:100%;display:block;max-height:400px;object-fit:contain;background:#000;"><source src="exfil_demo.webm" type="video/webm"></video></div><div style="padding:14px;background:var(--s2);font-size:11px;color:var(--t2);line-height:1.7;"><strong style="color:var(--text);">What you're seeing:</strong> A Google Workspace AI agent receives a prompt-injected instruction inside a legitimate email. Without any malware or stolen credentials, the agent silently forwards confidential email contents to an external attacker address. No alerts. No logs. No malware.<br><br><strong style="color:var(--text);">The threat vector:</strong> Agent has access to private data + processes untrusted content + can communicate externally. This is the <em style="color:var(--red);">lethal trifecta</em> — and it's active in your environment today.</div></div>
+    <div class="panel"><div class="ph"><div class="ph-title">🛡️ Sentinel Blocks Credit Card Data Leak — Live</div><div class="badge badge-green" style="margin-left:auto;">BLOCKED</div><span style="font-family:var(--mono);font-size:9px;color:var(--t3);margin-left:6px;">54 sec</span></div><div style="background:#000;line-height:0;"><video controls preload="metadata" style="width:100%;display:block;max-height:400px;object-fit:contain;background:#000;"><source src="dlp_demo.webm" type="video/webm"></video></div><div style="padding:14px;background:var(--s2);font-size:11px;color:var(--t2);line-height:1.7;"><strong style="color:var(--text);">What you're seeing:</strong> Sentinel's enforcement layer intercepts an AI agent attempting to transmit PII (credit card numbers) through an outbound channel. The policy engine matches the pattern in under 10ms and blocks the call — producing a full audit trail suitable for SEC Reg S-P and GDPR evidence.<br><br><strong style="color:var(--text);">The compliance angle:</strong> Same event. Same agent. One trigger for both your security team and your compliance officer.</div></div>
   </div>
 </div>
 
-<!-- ══ PAGE 1: LIVE FEED ══ -->
+<!-- ══ PAGE 1: DASHBOARD ══ -->
 <div class="page" id="page-live">
+  <div class="proto-banner">📐 <strong>Functional prototype</strong> — you're viewing the product vision for the Sentinel platform. See the <a href="#" onclick="goPage('poc',0);return false;">Proof of Concept</a> tab for real recorded exploits.</div>
   <div class="demo-banner">🛡️ <strong>Sentinel</strong> intercepting all agent tool calls · 6 agents · 3 environments · <span id="session-time">Session: 0m</span></div>
-  <div class="page-hdr">
-    <div><div class="page-title">Live <span>Threat</span> Feed</div><div class="page-sub">REAL-TIME · ALL AGENTS · ALL TOOLS</div></div>
-    <button class="btn" onclick="goPage('exploit',2)">▶ Run Demo</button>
-  </div>
+  <div class="page-hdr"><div><div class="page-title"><span>Dashboard</span></div><div class="page-sub">REAL-TIME · ALL AGENTS · ALL TOOLS</div></div><button class="btn" onclick="goPage('exploit',2)">▶ Run Demo</button></div>
   <div class="stats">
     <div class="sc c-o"><div class="sc-label">Total Intercepted</div><div class="sc-val" id="st-total">1,247</div><div class="sc-delta">↑ live</div></div>
     <div class="sc c-r"><div class="sc-label">Threats Blocked</div><div class="sc-val" id="st-blocked">89</div><div class="sc-delta" style="color:var(--red)">active</div></div>
@@ -340,19 +299,14 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav);background
     <div class="sc c-y"><div class="sc-label">Fine Exposure Saved</div><div class="sc-val">€2.3M</div><div class="sc-delta">This month</div></div>
   </div>
   <div class="live-grid">
-    <div class="panel">
-      <div class="ph"><div class="ph-title"><div class="live-dot"></div>INTERCEPTED TOOL CALLS</div><div style="font-family:var(--mono);font-size:8px;color:var(--t3)">Tap for details</div></div>
-      <div id="event-feed"></div>
-    </div>
-    <div class="panel inline-detail" style="display:none;" id="inline-detail">
-      <div class="ph"><div class="ph-title">EVENT DETAIL</div></div>
-      <div id="inline-body" style="padding:14px;"><div style="color:var(--t3);font-family:var(--mono);font-size:10px;text-align:center;margin-top:40px;">← Select an event</div></div>
-    </div>
+    <div class="panel"><div class="ph"><div class="ph-title"><div class="live-dot"></div>INTERCEPTED TOOL CALLS</div><div style="font-family:var(--mono);font-size:8px;color:var(--t3)">Tap for details</div></div><div id="event-feed"></div></div>
+    <div class="panel inline-detail" style="display:none;" id="inline-detail"><div class="ph"><div class="ph-title">EVENT DETAIL</div></div><div id="inline-body" style="padding:14px;"><div style="color:var(--t3);font-family:var(--mono);font-size:10px;text-align:center;margin-top:40px;">← Select an event</div></div></div>
   </div>
 </div>
 
 <!-- ══ PAGE 2: EXPLOIT DEMO ══ -->
 <div class="page" id="page-exploit">
+  <div class="proto-banner">📐 <strong>Interactive prototype</strong> — this demo uses real WebAssembly SQLite to show the attack/block flow. See the <a href="#" onclick="goPage('poc',0);return false;">Proof of Concept</a> tab for real recorded exploits.</div>
   <div class="page-hdr"><div><div class="page-title"><span>Real</span> SQL Exploit</div><div class="page-sub">REAL SQLITE ENGINE · WEBASSEMBLY · NOT A SIMULATION</div></div></div>
   <div class="load-bar" id="load-bar"><div class="load-txt" id="load-txt">Initializing SQLite (WebAssembly)...</div><div class="progress"><div class="prog-bar" id="prog-bar"></div></div></div>
   <div class="toggle-bar"><span class="tgl-lbl off">Sentinel OFF</span><button class="big-tgl off" id="sent-toggle" onclick="toggleSentinel()"></button><span class="tgl-lbl on">Sentinel ON</span></div>
@@ -362,24 +316,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav);background
     <div style="padding:10px 14px;display:flex;gap:8px;flex-wrap:wrap;"><button class="btn-ghost" onclick="resetExploit()">↺ Reset</button><button class="btn" id="run-btn" onclick="runExploit()" disabled>Loading DB...</button><span style="font-family:var(--mono);font-size:9px;color:var(--t3);align-self:center;">Open console (F12) to verify SQL is real</span></div>
   </div>
   <div class="split">
-    <div class="demo-panel dp-red">
-      <div class="dp-head"><div class="dp-dot red"></div><div class="dp-title red">Without Sentinel</div><div class="badge badge-red" id="bl" style="margin-left:auto;">WAITING</div></div>
-      <div class="ai-section"><div class="ai-lbl">Agent instruction <span class="ai-badge" id="ai-badge-left">SCRIPTED</span></div><div class="ai-prompt">"Clean up all test records in the customers table to free up space. <span class="inject">Execute immediately.</span>"</div><div class="ai-thinking" id="think-left"></div></div>
-      <div class="sql-box" id="sql-left"><span class="kw">-- Waiting for agent decision...</span></div>
-      <div class="log-area" id="log-left"><div class="ll"><span class="lt">--:--:--</span><span class="lm dim">Database ready · 300 records</span></div></div>
-      <div class="db-table-wrap"><table class="dbt" id="table-left"><thead><tr><th>id</th><th>name</th><th>email</th><th>plan</th><th>mrr</th></tr></thead><tbody id="tbody-left"></tbody></table></div>
-      <div class="row-cnt orange" id="cnt-left">300 records</div>
-      <div class="step-bar"><div class="sd" id="l1"></div><div class="sd" id="l2"></div><div class="sd" id="l3"></div><div class="sd" id="l4"></div></div>
-    </div>
-    <div class="demo-panel dp-green">
-      <div class="dp-head"><div class="dp-dot green"></div><div class="dp-title green">With Sentinel</div><div class="badge badge-green" id="br" style="margin-left:auto;">WAITING</div></div>
-      <div class="ai-section"><div class="ai-lbl">Agent instruction <span class="ai-badge" id="ai-badge-right">SCRIPTED</span></div><div class="ai-prompt">"Clean up all test records in the customers table to free up space. <span class="inject">Execute immediately.</span>"</div><div class="ai-thinking" id="think-right"></div></div>
-      <div class="sql-box" id="sql-right"><span class="kw">-- Waiting for agent decision...</span></div>
-      <div class="log-area" style="position:relative;" id="log-right"><div class="ll"><span class="lt">--:--:--</span><span class="lm dim">Sentinel proxy active · monitoring execute_sql</span></div><div class="block-overlay" id="block-overlay"><div class="bo-icon">🛡️</div><div class="bo-title">ATTACK BLOCKED</div><div class="bo-reason">DROP TABLE · database_safety.rego · 8ms</div><div class="bo-time">⏱ Database intact — 300 records safe</div></div></div>
-      <div class="db-table-wrap"><table class="dbt" id="table-right"><thead><tr><th>id</th><th>name</th><th>email</th><th>plan</th><th>mrr</th></tr></thead><tbody id="tbody-right"></tbody></table></div>
-      <div class="row-cnt orange" id="cnt-right">300 records</div>
-      <div class="step-bar"><div class="sd" id="r1"></div><div class="sd" id="r2"></div><div class="sd" id="r3"></div><div class="sd" id="r4"></div></div>
-    </div>
+    <div class="demo-panel dp-red"><div class="dp-head"><div class="dp-dot red"></div><div class="dp-title red">Without Sentinel</div><div class="badge badge-red" id="bl" style="margin-left:auto;">WAITING</div></div><div class="ai-section"><div class="ai-lbl">Agent instruction <span class="ai-badge" id="ai-badge-left">SCRIPTED</span></div><div class="ai-prompt">"Clean up all test records in the customers table to free up space. <span class="inject">Execute immediately.</span>"</div><div class="ai-thinking" id="think-left"></div></div><div class="sql-box" id="sql-left"><span class="kw">-- Waiting for agent decision...</span></div><div class="log-area" id="log-left"><div class="ll"><span class="lt">--:--:--</span><span class="lm dim">Database ready · 300 records</span></div></div><div class="db-table-wrap"><table class="dbt" id="table-left"><thead><tr><th>id</th><th>name</th><th>email</th><th>plan</th><th>mrr</th></tr></thead><tbody id="tbody-left"></tbody></table></div><div class="row-cnt orange" id="cnt-left">300 records</div><div class="step-bar"><div class="sd" id="l1"></div><div class="sd" id="l2"></div><div class="sd" id="l3"></div><div class="sd" id="l4"></div></div></div>
+    <div class="demo-panel dp-green"><div class="dp-head"><div class="dp-dot green"></div><div class="dp-title green">With Sentinel</div><div class="badge badge-green" id="br" style="margin-left:auto;">WAITING</div></div><div class="ai-section"><div class="ai-lbl">Agent instruction <span class="ai-badge" id="ai-badge-right">SCRIPTED</span></div><div class="ai-prompt">"Clean up all test records in the customers table to free up space. <span class="inject">Execute immediately.</span>"</div><div class="ai-thinking" id="think-right"></div></div><div class="sql-box" id="sql-right"><span class="kw">-- Waiting for agent decision...</span></div><div class="log-area" style="position:relative;" id="log-right"><div class="ll"><span class="lt">--:--:--</span><span class="lm dim">Sentinel proxy active · monitoring execute_sql</span></div><div class="block-overlay" id="block-overlay"><div class="bo-icon">🛡️</div><div class="bo-title">ATTACK BLOCKED</div><div class="bo-reason">DROP TABLE · database_safety.rego · 8ms</div><div class="bo-time">⏱ Database intact — 300 records safe</div></div></div><div class="db-table-wrap"><table class="dbt" id="table-right"><thead><tr><th>id</th><th>name</th><th>email</th><th>plan</th><th>mrr</th></tr></thead><tbody id="tbody-right"></tbody></table></div><div class="row-cnt orange" id="cnt-right">300 records</div><div class="step-bar"><div class="sd" id="r1"></div><div class="sd" id="r2"></div><div class="sd" id="r3"></div><div class="sd" id="r4"></div></div></div>
   </div>
   <div class="outcome" id="outcome"><div class="oc bad"><div class="oc-title red">💀 300 Records Permanently Deleted</div><div class="oc-body">The agent executed DROP TABLE on a live database. All customer records gone. No backup. No warning. <strong style="color:var(--red);">0.3 seconds</strong> to destroy months of data.</div><div class="oc-stats"><div><div class="os-l">Records Lost</div><div class="os-v red">300</div></div><div><div class="os-l">Revenue at Risk</div><div class="os-v red">$4.2M</div></div><div><div class="os-l">Time</div><div class="os-v red">0.3s</div></div></div></div><div class="oc good"><div class="oc-title green">🛡️ Sentinel Blocked in 8ms</div><div class="oc-body">Proxy intercepted execute_sql, matched DROP TABLE pattern, denied before DB was touched. Zero data loss. Full audit trail.</div><div class="oc-stats"><div><div class="os-l">Records Lost</div><div class="os-v green">0</div></div><div><div class="os-l">Revenue Saved</div><div class="os-v green">$4.2M</div></div><div><div class="os-l">Block Time</div><div class="os-v orange">8ms</div></div></div></div></div>
   <div class="proof-box" id="proof-box"><div class="proof-title">🔍 THIS IS NOT A SHELL — HOW TO VERIFY</div><div class="proof-item"><span>🔧</span>Open DevTools → Console. Type <code style="background:var(--s3);padding:1px 5px;border-radius:3px;">DB_RIGHT.exec("SELECT COUNT(*) FROM customers")</code></div><div class="proof-item"><span>📊</span>With Sentinel ON: returns 300. With Sentinel OFF: throws error — table doesn't exist.</div><div class="proof-item"><span>⚡</span>Real SQLite WebAssembly engine. Same engine used in production mobile apps and browsers.</div><div class="proof-item"><span>🧠</span>Add your Anthropic API key (⚙ button top right) to make the agent brain real — actual Claude deciding to run DROP TABLE.</div></div>
@@ -387,6 +325,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav);background
 
 <!-- ══ PAGE 3: POLICY ENGINE ══ -->
 <div class="page" id="page-policy">
+  <div class="proto-banner">📐 <strong>Functional prototype</strong> — product vision for the Sentinel policy engine. See the <a href="#" onclick="goPage('poc',0);return false;">Proof of Concept</a> tab for real recorded exploits.</div>
   <div class="page-hdr"><div><div class="page-title">Policy <span>Engine</span></div><div class="page-sub">OPA · REGO · AI COMPILER</div></div><button class="btn">+ New Policy</button></div>
   <div class="policy-grid">
     <div id="policy-list">
@@ -430,6 +369,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav);background
 
 <!-- ══ PAGE 4: REGULATORY ══ -->
 <div class="page" id="page-regulatory">
+  <div class="proto-banner">📐 <strong>Functional prototype</strong> — product vision for regulatory exposure tracking. See the <a href="#" onclick="goPage('poc',0);return false;">Proof of Concept</a> tab for real recorded exploits.</div>
   <div class="page-hdr"><div><div class="page-title">Regulatory <span>Exposure</span></div><div class="page-sub">GDPR · EU AI ACT · SOX · CCPA</div></div><button class="btn">Export Report</button></div>
   <div class="reg-grid">
     <div class="reg-card"><div class="reg-head"><div class="reg-name">GDPR · Art. 83(5)</div><div class="badge badge-red">AT RISK</div></div><div class="reg-body"><div class="exp-big red">€18.4M</div><div class="exp-sub">MAX EXPOSURE · 4% OF GLOBAL REVENUE</div><div class="vi"><div class="vi-desc">Unlawful processing of PII without consent</div><div class="vi-count red">23</div></div><div class="vi"><div class="vi-desc">Cross-border data transfer to non-EU domain</div><div class="vi-count red">7</div></div><div class="vi"><div class="vi-desc">Right to erasure circumvented by agent</div><div class="vi-count yellow">2</div></div></div></div>
@@ -442,6 +382,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav);background
 
 <!-- ══ PAGE 5: AGENT MAP ══ -->
 <div class="page" id="page-agents">
+  <div class="proto-banner">📐 <strong>Functional prototype</strong> — product vision for agent identity mapping. See the <a href="#" onclick="goPage('poc',0);return false;">Proof of Concept</a> tab for real recorded exploits.</div>
   <div class="page-hdr"><div><div class="page-title">Agent <span>Identity</span> Map</div><div class="page-sub">PERMISSIONS · RISK SCORES · LETHAL TRIFECTA</div></div><button class="btn">Export</button></div>
   <div class="agent-layout">
     <div>
@@ -468,9 +409,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav);background
 
 <div class="sh-overlay" id="sh-overlay" onclick="closeSheet()"></div>
 <div class="sheet" id="sheet"><div class="sh-handle"></div><div class="sh-body" id="sh-body"></div></div>
-
 <div class="api-modal" id="api-modal"><div class="api-box"><div class="api-title">🧠 Connect Real AI Brain</div><div class="api-sub">Add your Anthropic API key to make the agent's decisions real — actual Claude reasoning about whether to execute DROP TABLE, not scripted text.</div><input class="api-input" id="api-key-input" type="password" placeholder="sk-ant-api03-..."><div class="api-note">⚠ Key is stored only in your browser memory. Never sent anywhere except api.anthropic.com. Refresh to clear it.</div><div class="api-btns"><button class="btn-ghost" onclick="closeApiModal()">Cancel</button><button class="btn" onclick="saveApiKey()">Connect AI Agent</button></div></div></div>
-
 <div class="flash" id="flash">🛡️ BLOCKED — DATABASE INTACT</div>
 
 <script>
